@@ -31,36 +31,32 @@ for i in range(3):
 time_correlation_dict = {}
 
 STEP = 1
-MAX_PERIOD = 20
+MAX_PERIOD = 50
 
 #### CORRELATION WITH PAST ####
 
 TRAIN_FEATURES_DF = TRAIN_DF.copy()
-TRAIN_FEATURES_DF["signal_p0"] = TRAIN_FEATURES_DF["signal"]
-for i in range(MAX_PERIOD):
-    TRAIN_FEATURES_DF["signal_p" + str(i + 1)] = TRAIN_FEATURES_DF["signal_p" + str(i)].shift(periods=STEP)
+TRAIN_FEATURES_DF["signal_pN"] = TRAIN_FEATURES_DF["signal"]
 
-print(TRAIN_FEATURES_DF)
-TRAIN_FEATURES_DF.dropna(inplace=True)
 corr_coeff_dict = {}
 for i in range(MAX_PERIOD):
-    corr_coeff_dict[i] = numpy.corrcoef(TRAIN_FEATURES_DF["signal_p" + str(i)], TRAIN_FEATURES_DF["open_channels"])
+    TRAIN_FEATURES_DF.dropna(inplace=True)
+    corr_coeff_dict[i] = numpy.corrcoef(TRAIN_FEATURES_DF["signal_pN"], TRAIN_FEATURES_DF["open_channels"])
     print(corr_coeff_dict[i])
     time_correlation_dict[-i] = corr_coeff_dict[i][0][1]
+    TRAIN_FEATURES_DF["signal_pN"] = TRAIN_FEATURES_DF["signal_pN"].shift(periods=STEP)
 
 #### CORRELATION WITH FUTURE ####
 TRAIN_FEATURES_DF = TRAIN_DF.copy()
-TRAIN_FEATURES_DF["signal_p0"] = TRAIN_FEATURES_DF["signal"]
-for i in range(MAX_PERIOD):
-    TRAIN_FEATURES_DF["signal_p" + str(i + 1)] = TRAIN_FEATURES_DF["signal_p" + str(i)].shift(periods=-STEP)
+TRAIN_FEATURES_DF["signal_pN"] = TRAIN_FEATURES_DF["signal"]
 
-print(TRAIN_FEATURES_DF)
-TRAIN_FEATURES_DF.dropna(inplace=True)
 corr_coeff_dict = {}
 for i in range(MAX_PERIOD):
-    corr_coeff_dict[i] = numpy.corrcoef(TRAIN_FEATURES_DF["signal_p" + str(i)], TRAIN_FEATURES_DF["open_channels"])
+    TRAIN_FEATURES_DF.dropna(inplace=True)
+    corr_coeff_dict[i] = numpy.corrcoef(TRAIN_FEATURES_DF["signal_pN"], TRAIN_FEATURES_DF["open_channels"])
     print(corr_coeff_dict[i])
     time_correlation_dict[i] = corr_coeff_dict[i][0][1]
+    TRAIN_FEATURES_DF["signal_pN"] = TRAIN_FEATURES_DF["signal_pN"].shift(periods=STEP)
 
 print(time_correlation_dict)
 
