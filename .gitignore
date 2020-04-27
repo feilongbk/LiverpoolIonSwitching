@@ -134,3 +134,7 @@ dmypy.json
 *.pdf
 .idea/
 *.csv
+*.log
+*.pickle
+.DS_Store
+*.txt
